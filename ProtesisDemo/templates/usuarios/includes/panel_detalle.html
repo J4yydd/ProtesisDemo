@@ -1,0 +1,85 @@
+<section class="ws-detail">
+  <div class="ws-detail-head">
+    <div>
+      <p class="crumb">Solicitudes de acceso / {{ solicitud.nombre_completo }}</p>
+      <h2 class="ws-title">{{ solicitud.nombre_completo }}</h2>
+    </div>
+    <span class="badge {% if solicitud.estado == 'Pendiente' %}p{% elif solicitud.estado == 'Aprobada' %}ok{% else %}warn{% endif %}">{{ solicitud.estado }}</span>
+  </div>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="note {% if message.tags == 'error' %}bad{% elif message.tags == 'success' %}ok{% elif message.tags == 'warning' %}p{% endif %}">
+        <p class="msg">{{ message }}</p>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  {% if solicitud.estado == 'Pendiente' %}
+  <div class="note">
+    <p class="msg">Esta solicitud está pendiente de revisión.</p>
+  </div>
+  {% else %}
+  <div class="note">
+    <p class="msg">Esta solicitud ya fue procesada.</p>
+  </div>
+  {% endif %}
+
+  <article class="info-card">
+    <h3>Información de la solicitud</h3>
+    <dl class="datos">
+      <div>
+        <dt>Nombre completo</dt>
+        <dd>{{ solicitud.nombre_completo }}</dd>
+      </div>
+      <div>
+        <dt>Correo electrónico</dt>
+        <dd>{{ solicitud.correo_electronico }}</dd>
+      </div>
+      <div>
+        <dt>Teléfono</dt>
+        <dd>{{ solicitud.telefono }}</dd>
+      </div>
+      <div>
+        <dt>CURP</dt>
+        <dd>{{ solicitud.curp }}</dd>
+      </div>
+      <div>
+        <dt>RFC</dt>
+        <dd>{{ solicitud.rfc }}</dd>
+      </div>
+      <div>
+        <dt>Matrícula institucional</dt>
+        <dd>{{ solicitud.matricula_institucional }}</dd>
+      </div>
+      <div>
+        <dt>Cédula profesional</dt>
+        <dd>{{ solicitud.cedula_profesional }}</dd>
+      </div>
+      <div>
+        <dt>Adscripción / unidad</dt>
+        <dd>{{ solicitud.adscripcion_unidad }}</dd>
+      </div>
+      <div>
+        <dt>Categoría / puesto</dt>
+        <dd>{{ solicitud.categoria_puesto }}</dd>
+      </div>
+      <div>
+        <dt>Rol solicitado</dt>
+        <dd>{{ solicitud.rol.nombre }}</dd>
+      </div>
+      <div>
+        <dt>Estado</dt>
+        <dd>{{ solicitud.estado }}</dd>
+      </div>
+    </dl>
+  </article>
+
+  <div class="ws-foot">
+    <a class="btn sec" href="{% url 'usuarios:administrar_usuarios' %}">Regresar</a>
+    {% if solicitud.estado == 'Pendiente' %}
+    <a class="btn sec" href="{% url 'usuarios:confirmar_rechazo' solicitud.id_solicitud_acceso %}">Rechazar solicitud</a>
+    <a class="btn" href="{% url 'usuarios:confirmar_aprobacion' solicitud.id_solicitud_acceso %}">Aprobar solicitud</a>
+    {% endif %}
+  </div>
+</section>

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Acceso denegado · SPMEP{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h1>Acceso denegado</h1>
+  <p class="lead">No tienes permiso para ver esta sección.</p>
+  <p class="hint"><a class="textlink" href="{% url 'usuarios:panel' %}">Volver al panel</a></p>
+</section>
+{% endblock %}

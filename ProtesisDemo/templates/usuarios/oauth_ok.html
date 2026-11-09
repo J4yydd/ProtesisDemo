@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Autenticación correcta · SPMEP{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h1>Autenticación con Google correcta</h1>
+  <p class="lead">Correo autenticado: {{ correo }}</p>
+  <p class="hint"><a class="textlink" href="{% url 'usuarios:login' %}">Volver a iniciar sesión</a></p>
+</section>
+{% endblock %}

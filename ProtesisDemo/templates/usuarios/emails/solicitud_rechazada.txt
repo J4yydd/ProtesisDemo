@@ -1,0 +1,10 @@
+{{ sistema }}
+
+Hola {{ nombre }},
+
+Tu solicitud de acceso fue revisada y fue rechazada.
+
+Rol solicitado: {{ rol }}
+
+Atentamente,
+{{ sistema }}

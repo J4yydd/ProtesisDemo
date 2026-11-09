@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Solicitud {{ solicitud.id_solicitud_acceso }} · SPMEP{% endblock %}
+
+{% block body_class %}ws-page{% endblock %}
+
+{% block content %}
+<div class="ws">
+  {% include "usuarios/includes/lista_solicitudes.html" %}
+  {% include "usuarios/includes/panel_detalle.html" %}
+</div>
+{% endblock %}

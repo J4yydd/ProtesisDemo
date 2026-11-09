@@ -1,0 +1,12 @@
+{{ sistema }}
+
+Hola {{ nombre }},
+
+Tu solicitud de acceso fue aprobada.
+
+Rol autorizado: {{ rol }}
+
+Ya puedes iniciar sesión con Google usando este mismo correo: {{ correo }}
+
+Atentamente,
+{{ sistema }}
