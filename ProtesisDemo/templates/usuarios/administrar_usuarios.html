@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Administrar usuarios · SPMEP{% endblock %}
+
+{% block body_class %}ws-page{% endblock %}
+
+{% block content %}
+<div class="ws">
+  {% include "usuarios/includes/lista_solicitudes.html" %}
+  <section class="ws-detail">
+    <p class="lead">Selecciona una solicitud para revisarla.</p>
+    <div class="ws-foot">
+      <a class="btn sec" href="{% url 'usuarios:panel' %}">Regresar</a>
+    </div>
+  </section>
+</div>
+{% endblock %}

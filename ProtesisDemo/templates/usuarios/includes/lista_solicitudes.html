@@ -1,0 +1,28 @@
+<aside class="ws-list">
+  <h1>Solicitudes de acceso</h1>
+  <p class="lead">Las solicitudes nuevas inician en estado Pendiente. Selecciona una para revisarla.</p>
+
+  {% if solicitudes %}
+  <div class="sol-list">
+    {% for item in solicitudes %}
+    <a class="sol-item{% if solicitud and item.id_solicitud_acceso == solicitud.id_solicitud_acceso %} is-active{% endif %}" href="{% url 'usuarios:detalle_solicitud' item.id_solicitud_acceso %}">
+      <span class="sol-col">
+        <strong>{{ item.nombre_completo }}</strong>
+        <small>Solicitante</small>
+      </span>
+      <span class="sol-col">
+        <strong>{{ item.correo_electronico }}</strong>
+        <small>Correo</small>
+      </span>
+      <span class="sol-col">
+        <strong>{{ item.rol.nombre }}</strong>
+        <small>Rol solicitado</small>
+      </span>
+      <span class="badge {% if item.estado == 'Pendiente' %}p{% elif item.estado == 'Aprobada' %}ok{% else %}warn{% endif %}">{{ item.estado }}</span>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="hint">No hay solicitudes de acceso.</p>
+  {% endif %}
+</aside>

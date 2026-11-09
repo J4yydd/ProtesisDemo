@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Solicitud enviada · SPMEP{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h1>Solicitud enviada</h1>
+  <p class="lead">Tu solicitud fue enviada correctamente y está pendiente de revisión.</p>
+  <p class="hint">Debes esperar a que un Administrador la revise. Cuando esté autorizada, podrás iniciar sesión con Google usando el mismo correo.</p>
+  <p class="hint"><a class="textlink" href="{% url 'usuarios:login' %}">Volver al login</a></p>
+</section>
+{% endblock %}

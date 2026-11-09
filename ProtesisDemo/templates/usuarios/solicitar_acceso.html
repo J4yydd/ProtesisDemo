@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Solicitar acceso · SPMEP{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h1>Solicitar acceso</h1>
+  <p class="lead">Completa tus datos para que un Administrador revise tu solicitud. El correo debe ser el mismo que usarás después para iniciar sesión con Google.</p>
+
+  <form method="post" class="form-solicitud" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+      <div class="note bad">{{ form.non_field_errors }}</div>
+    {% endif %}
+    <div class="form-grid">
+      {% for field in form %}
+        <p class="field">
+          {{ field.label_tag }}
+          {{ field }}
+          {% if field.errors %}
+            <span class="err">{{ field.errors.0 }}</span>
+          {% endif %}
+        </p>
+      {% endfor %}
+    </div>
+    <p class="acts">
+      <button class="btn" type="submit">Enviar solicitud</button>
+      <a class="btn sec" href="{% url 'usuarios:login' %}">Volver al login</a>
+    </p>
+  </form>
+</section>
+{% endblock %}

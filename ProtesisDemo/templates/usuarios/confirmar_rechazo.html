@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Confirmar rechazo · SPMEP{% endblock %}
+
+{% block body_class %}ws-page{% endblock %}
+
+{% block content %}
+<div class="ws">
+  {% include "usuarios/includes/lista_solicitudes.html" %}
+  {% include "usuarios/includes/panel_detalle.html" %}
+</div>
+
+<div class="modal-overlay">
+  <div class="modal-card">
+    <h1>¿Deseas rechazar esta solicitud?</h1>
+    <p class="modal-sum">{{ solicitud.nombre_completo }} · {{ solicitud.correo_electronico }} · {{ solicitud.rol.nombre }}</p>
+    <form method="post" class="modal-acts">
+      {% csrf_token %}
+      <a class="btn sec" href="{% url 'usuarios:detalle_solicitud' solicitud.id_solicitud_acceso %}">Cancelar</a>
+      <button class="btn danger" type="submit">Confirmar rechazo</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
