@@ -88,6 +88,15 @@ def _crear_sesion_interna(request, usuario):
     request.session[SESION_NOMBRE] = usuario.nombre
 
 
+def _redirigir_por_rol(request):
+    rol = request.session.get(SESION_ROL)
+    if rol == ROL_ADMINISTRADOR:
+        return redirect("usuarios:administrar_usuarios")
+    if rol in ["Enfermera", "Psicóloga"]:
+        return redirect("pacientes:lista")
+    return redirect("pacientes:lista")
+
+
 def _autorizar_correo(request, correo):
     correo_normalizado = correo.strip()
     usuario = (
@@ -99,7 +108,7 @@ def _autorizar_correo(request, correo):
         if not usuario.activo:
             return _error_login(request, "Tu cuenta no se encuentra activa.")
         _crear_sesion_interna(request, usuario)
-        return redirect("usuarios:panel")
+        return _redirigir_por_rol(request)
 
     solicitud = (
         SolicitudAcceso.objects.filter(correo_electronico__iexact=correo_normalizado)
@@ -129,7 +138,7 @@ def _autorizar_correo(request, correo):
 
 def login(request):
     if _sesion_interna_valida(request):
-        return redirect("usuarios:panel")
+        return _redirigir_por_rol(request)
     return render(request, "usuarios/login.html")
 
 
@@ -160,21 +169,6 @@ def _respuesta_si_no_es_administrador(request):
     if not _es_administrador(request):
         return render(request, "usuarios/acceso_denegado.html", status=403)
     return None
-
-
-def panel(request):
-    if not _sesion_interna_valida(request):
-        return redirect("usuarios:login")
-    return render(
-        request,
-        "usuarios/panel.html",
-        {
-            "nombre": request.session.get(SESION_NOMBRE),
-            "correo": request.session.get(SESION_CORREO),
-            "rol": request.session.get(SESION_ROL),
-            "es_administrador": _es_administrador(request),
-        },
-    )
 
 
 def _solicitudes_admin():

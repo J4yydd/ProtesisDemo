@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Pacientes · SPMEP{% endblock %}
+
+{% block content %}
+<div class="row">
+  <h1>Pacientes</h1>
+  <a class="btn" href="{% url 'pacientes:nuevo_paciente' %}">Registrar paciente</a>
+</div>
+
+<div class="row">
+  <form method="get" action="{% url 'pacientes:lista' %}" class="search" style="display: flex; gap: 8px; width: 100%; max-width: 480px;">
+    <input type="search" name="q" value="{{ q }}" placeholder="Buscar por nombre o CURP…" aria-label="Buscar paciente" autofocus>
+    <button type="submit" class="btn sec" style="white-space: nowrap;">Buscar</button>
+    {% if q %}
+    <a href="{% url 'pacientes:lista' %}" class="btn sec" style="white-space: nowrap;">Limpiar</a>
+    {% endif %}
+  </form>
+  <span class="hint">{{ pacientes|length }} de {{ total_pacientes }} pacientes</span>
+</div>
+
+<div class="list">
+  {% for p in pacientes %}
+  <a class="item" href="{% url 'pacientes:detalle' p.curp %}">
+    <span>
+      <strong>{{ p.nombre_completo }}</strong>
+      <small>{{ p.curp }} · {% if p.tiene_expediente %}Con expediente{% else %}Sin expediente{% endif %}</small>
+    </span>
+    {% if p.tiene_solicitud_activa %}
+    <span class="badge p">Solicitud {{ p.solicitud_activa.estado|lower }}</span>
+    {% endif %}
+  </a>
+  {% empty %}
+  <div class="card empty" style="text-align: center; color: var(--tx2); padding: 32px;">
+    {% if q %}
+    No hay pacientes que coincidan con “<strong>{{ q }}</strong>”. Revisa el nombre o la CURP, o registra un paciente nuevo.
+    {% else %}
+    Aún no hay pacientes registrados en el sistema. Utiliza el botón superior para registrar el primero.
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
+

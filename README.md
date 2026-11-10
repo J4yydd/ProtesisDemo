@@ -7,7 +7,7 @@ Este repositorio es la base Django del proyecto. Hoy el módulo de **usuarios** 
 - solicitud pública de acceso;
 - inicio de sesión con Google;
 - autorización interna (solo correos dados de alta);
-- panel según rol;
+- redirección directa según rol (Administrador a gestión de usuarios; Enfermera/Psicóloga a directorio de pacientes);
 - administración de solicitudes (aprobar / rechazar);
 - correo de notificación al solicitante.
 
@@ -152,7 +152,7 @@ Usuario.objects.create(
 )
 ```
 
-Luego ve a `/login/`, entra con Google y deberías llegar al panel. Si el rol es Administrador verás **Administrar usuarios**.
+Luego ve a `/login/`, entra con Google y entrarás directo al espacio según tu rol (si eres Administrador verás **Administrar usuarios**; si eres Enfermera o Psicóloga verás **Pacientes**).
 
 Opcional: `python manage.py createsuperuser` solo sirve para `/admin/` de Django (inspección de datos). Esa cuenta **no** es la sesión del SPMEP.
 
@@ -173,14 +173,14 @@ El resto de roles se dan de alta por un administrador (o por shell / admin de Dj
 3. La solicitud nace en estado **Pendiente**.
 4. Hasta que un administrador la apruebe, el login con Google muestra que la solicitud sigue pendiente.
 5. Si se rechaza, el login informa el rechazo. Puede volver a solicitar con el mismo correo.
-6. Si se aprueba, ya puede entrar y llega al panel con su rol.
+6. Si se aprueba, ya puede entrar y accede a las funciones de su rol.
 
 No se puede crear otra solicitud Pendiente con el mismo correo, ni solicitar si ese correo ya está autorizado como `Usuario`.
 
 ### Flujo del administrador
 
 1. Entra con Google (usuario Administrador activo).
-2. Panel → **Administrar usuarios**.
+2. Entra directo a **Administrar usuarios**.
 3. Elige una solicitud en la lista.
 4. **Aprobar solicitud** o **Rechazar solicitud** (hay confirmación).
 5. Al aprobar se crea el `Usuario` y la solicitud pasa a **Aprobada**.
@@ -193,7 +193,7 @@ No se puede crear otra solicitud Pendiente con el mismo correo, ni solicitar si 
 ### Sesión y permisos
 
 - La sesión interna guarda `id_usuario`, rol, correo y nombre. No usa `AUTH_USER_MODEL` del SPMEP.
-- Sin sesión, panel y administración redirigen a login.
+- Sin sesión activa, las secciones protegidas redirigen a login.
 - Un rol que no sea Administrador recibe **Acceso denegado** (403) en administrar solicitudes.
 - `activo=False` impide el login aunque el correo exista.
 - **Cerrar sesión** limpia la sesión y vuelve al login.
@@ -227,20 +227,25 @@ Asuntos:
 | --- | --- | --- |
 | `/login/` | público | Google Login y enlace a solicitar acceso |
 | `/solicitar-acceso/` | público | formulario de solicitud |
-| `/panel/` | usuario con sesión | datos de sesión y, si es admin, enlace a solicitudes |
 | `/logout/` | usuario con sesión | cierra sesión |
 | `/administrar-usuarios/` | Administrador | listado y detalle de solicitudes |
-| `/admin/` | superuser Django | inspección de Rol, Usuario, SolicitudAcceso |
+| `/pacientes/` | Enfermera / Psicóloga | listado y búsqueda en tiempo real de pacientes |
+| `/pacientes/nuevo/` | Enfermera / Psicóloga | CU-W01: Registrar nuevo paciente |
+| `/pacientes/<curp>/` | Enfermera / Psicóloga | detalle del paciente y visualización del expediente clínico |
+| `/pacientes/<curp>/expediente/nuevo/` | Enfermera / Psicóloga | CU-W02: Registrar expediente de paciente y primera medición |
+| `/expedientes/<id>/mediciones/nueva/` | Enfermera / Psicóloga | registrar nueva medición antropométrica (renovar vigencia) |
+| `/expedientes/<id>/solicitar/` | Enfermera / Psicóloga | CU-W11: Solicitar prótesis y envío a captura |
+| `/admin/` | superuser Django | inspección de Rol, Usuario, Pacientes, Expedientes, Solicitudes |
 
 ## Tests
 
-Desde la carpeta de `manage.py`, con el venv activo:
+Desde la carpeta de `manage.py`, con el entorno activo:
 
 ```bash
-python manage.py test usuarios
+python manage.py test
 ```
 
-Cubre modelos, OAuth (con mocks), autorización, listado admin, aprobar/rechazar, correos y el formulario público. No necesitas Google ni SMTP reales para la suite.
+Ejecuta los tests de autenticación/usuarios (`usuarios`) y los de pacientes, expedientes y solicitudes de prótesis (`pacientes`), cubriendo todas las reglas de negocio (RN-04 a RN-26).
 
 ## Colaborar
 

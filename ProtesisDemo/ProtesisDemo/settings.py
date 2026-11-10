@@ -16,6 +16,12 @@ env = environ.Env(
 env_file = BASE_DIR / ".env"
 if env_file.exists():
     environ.Env.read_env(env_file)
+elif (BASE_DIR.parent / ".env").exists():
+    environ.Env.read_env(BASE_DIR.parent / ".env")
+elif (BASE_DIR / ".env.example").exists():
+    environ.Env.read_env(BASE_DIR / ".env.example")
+elif (BASE_DIR.parent / ".env.example").exists():
+    environ.Env.read_env(BASE_DIR.parent / ".env.example")
 
 SECRET_KEY = env("SECRET_KEY", default="django-insecure-local-dev-only-change-me")
 DEBUG = env("DEBUG")
@@ -30,6 +36,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "usuarios",
+    "pacientes",
 ]
 
 MIDDLEWARE = [

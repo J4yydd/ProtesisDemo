@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block title %}{{ paciente.nombre_completo }} · SPMEP{% endblock %}
+
+{% block content %}
+<div class="crumbs">
+  <a href="{% url 'pacientes:lista' %}">Pacientes</a> / {{ paciente.nombre_completo }}
+</div>
+
+<div class="row">
+  <div>
+    <h1>{{ paciente.nombre_completo }}</h1>
+    <span class="hint">{{ paciente.curp }}</span>
+  </div>
+</div>
+
+<!-- Tarjeta de datos demográficos del paciente -->
+<div class="card soft">
+  <dl class="datos">
+    <div>
+      <dt>Fecha de nacimiento</dt>
+      <dd>{{ paciente.fecha_nacimiento|date:"d/m/Y" }}</dd>
+    </div>
+    <div>
+      <dt>Teléfono</dt>
+      <dd>{{ paciente.telefono }}</dd>
+    </div>
+    <div>
+      <dt>Correo electrónico</dt>
+      <dd>{{ paciente.correo|default:"—" }}</dd>
+    </div>
+    <div>
+      <dt>Nivel de estudios</dt>
+      <dd>{{ paciente.nivel_estudios|default:"—" }}</dd>
+    </div>
+    <div>
+      <dt>Ingresos mensuales</dt>
+      <dd>{% if paciente.ingresos_mensuales %}${{ paciente.ingresos_mensuales }} MXN{% else %}—{% endif %}</dd>
+    </div>
+    <div>
+      <dt>Estado civil</dt>
+      <dd>{{ paciente.estado_civil|default:"—" }}</dd>
+    </div>
+    <div>
+      <dt>¿Tiene hijos?</dt>
+      <dd>{{ paciente.tiene_hijos|default:"—" }}</dd>
+    </div>
+    <div>
+      <dt>¿Trabaja fuera de casa?</dt>
+      <dd>{{ paciente.trabaja_fuera_casa|default:"—" }}</dd>
+    </div>
+  </dl>
+</div>
+
+<!-- Sección de Expediente Clínico -->
+<section class="patient-exp">
+  <div class="section-heading">
+    <h2>Expediente Clínico</h2>
+    {% if expediente %}
+    <span class="hint">Folio #{{ expediente.id_expediente }} · Registrado el {{ expediente.fecha_registro|date:"d/m/Y" }}</span>
+    {% endif %}
+  </div>
+
+  {% if not expediente %}
+  <div class="exp-empty">
+    <p>Este paciente aún no tiene un expediente clínico registrado.</p>
+    <a class="btn" href="{% url 'pacientes:nuevo_expediente' paciente.curp %}">Registrar expediente</a>
+  </div>
+  {% else %}
+
+  <!-- Acciones y estado de captura -->
+  <div class="row exp-actions">
+    <div>
+      {% if expediente.consentimiento_captura %}
+      <span class="badge ok">Captura aprobada</span>
+      {% else %}
+      <span class="badge warn">Sin consentimiento de captura</span>
+      {% endif %}
+    </div>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+      <a class="btn sec" href="{% url 'pacientes:nueva_medicion' expediente.id_expediente %}">Registrar medición</a>
+      <a class="btn" href="{% url 'pacientes:solicitar_protesis' expediente.id_expediente %}">Solicitar prótesis</a>
+    </div>
+  </div>
+
+  <!-- Antecedentes Oncológicos -->
+  <div class="card">
+    <div class="band">Antecedentes oncológicos</div>
+    <dl class="datos">
+      <div>
+        <dt>Fecha de diagnóstico</dt>
+        <dd>{{ expediente.fecha_diagnostico|date:"d/m/Y" }}</dd>
+      </div>
+      <div>
+        <dt>Tipo de cáncer</dt>
+        <dd>{{ expediente.tipo_cancer }}</dd>
+      </div>
+      <div>
+        <dt>Tratamiento</dt>
+        <dd>{{ expediente.tratamiento }}</dd>
+      </div>
+      <div>
+        <dt>Fecha de mastectomía</dt>
+        <dd>{{ expediente.fecha_mastectomia|date:"d/m/Y" }}</dd>
+      </div>
+      <div>
+        <dt>Lateralidad</dt>
+        <dd>{{ expediente.lateralidad }}</dd>
+      </div>
+      <div>
+        <dt>Servicio médico</dt>
+        <dd>{{ expediente.servicio_medico }}</dd>
+      </div>
+      <div>
+        <dt>¿Ya cuenta con prótesis?</dt>
+        <dd>{{ expediente.cuenta_con_protesis }}</dd>
+      </div>
+      <div>
+        <dt>Mano dominante</dt>
+        <dd>{{ expediente.mano_dominante }}</dd>
+      </div>
+      <div style="grid-column: 1 / -1;">
+        <dt>Observaciones clínicas</dt>
+        <dd style="font-weight: 500;">{{ expediente.observaciones|default:"Sin observaciones registradas." }}</dd>
+      </div>
+    </dl>
+  </div>
+
+  <!-- Historial de Mediciones Antropométricas -->
+  <div class="card">
+    <div class="band">Historial de mediciones antropométricas</div>
+
+    {% if medicion_vigente %}
+    <p style="margin: 0 0 12px; color: var(--tx);">
+      Medición vigente hasta el <strong>{{ medicion_vigente.fecha_vencimiento|date:"d/m/Y" }}</strong>.
+    </p>
+    {% else %}
+    <p style="margin: 0 0 12px; color: var(--err);">
+      <strong>No hay medición vigente.</strong> La última tiene más de 7 días; registra una nueva para poder solicitar la prótesis.
+    </p>
+    {% endif %}
+
+    <div style="overflow-x: auto;">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>LR (cm)</th>
+            <th>MP (cm)</th>
+            <th>IR (cm)</th>
+            <th>MR (cm)</th>
+            <th>Tórax (cm)</th>
+            <th>Estatura (m)</th>
+            <th>Peso (kg)</th>
+            <th>Registró</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for m in mediciones %}
+          <tr>
+            <td>{{ m.fecha_medicion|date:"d/m/Y" }}</td>
+            <td>{{ m.lr }}</td>
+            <td>{{ m.mp }}</td>
+            <td>{{ m.ir }}</td>
+            <td>{{ m.mr }}</td>
+            <td>{{ m.torax }}</td>
+            <td>{{ m.estatura }}</td>
+            <td>{{ m.peso }}</td>
+            <td>{{ m.registrado_por_nombre|default:"Enfermera/Psicóloga" }}</td>
+            <td>
+              {% if forloop.first %}
+                {% if m.esta_vigente %}
+                <span class="badge ok">Vigente</span>
+                {% else %}
+                <span class="badge warn">Vencida</span>
+                {% endif %}
+              {% else %}
+                <span class="badge no">Reemplazada</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="10" style="text-align: center; color: var(--tx2); padding: 14px;">
+              No hay mediciones registradas.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p class="hint" style="margin: 12px 0 0;">
+      La medición vigente es la más reciente y tiene una validez de 7 días. Al registrar una nueva, la anterior pasa automáticamente al historial. Cada solicitud conserva la medición con la que se creó.
+    </p>
+  </div>
+
+  <!-- Consentimientos -->
+  <div class="card">
+    <div class="band">Consentimientos</div>
+    <dl class="datos">
+      <div>
+        <dt>Seguimiento y uso de datos</dt>
+        <dd>
+          {% if expediente.consentimiento_seguimiento %}
+          <span class="badge ok">Aprobado</span>
+          {% else %}
+          <span class="badge warn">No aprobado</span>
+          {% endif %}
+        </dd>
+      </div>
+      <div>
+        <dt>Captura para la prótesis</dt>
+        <dd>
+          {% if expediente.consentimiento_captura %}
+          <span class="badge ok">Aprobado</span>
+          {% else %}
+          <span class="badge warn">No aprobado</span>
+          {% endif %}
+        </dd>
+      </div>
+    </dl>
+  </div>
+
+  <!-- Solicitudes de prótesis -->
+  <div class="card">
+    <div class="band">Solicitudes de prótesis</div>
+    {% if paciente.solicitudes.all %}
+    <div class="list" style="margin: 0;">
+      {% for s in paciente.solicitudes.all %}
+      <div class="item" style="box-shadow: none; background: var(--card); cursor: default;">
+        <span>
+          <strong>Solicitud #{{ s.id_solicitud }} · {{ s.lugar_captura.nombre }}</strong>
+          <small>
+            Cita: {{ s.fecha_hora_cita|date:"d/m/Y, H:i" }} h · Medición del {{ s.medicion.fecha_medicion|date:"d/m/Y" }}
+            {% if s.enviado_escritorio %} · Notificado a SCPMEP{% endif %}
+          </small>
+        </span>
+        <span class="badge {% if s.estado == 'Pendiente' or s.estado == 'En proceso' %}p{% elif s.estado == 'Atendida' %}ok{% else %}no{% endif %}">
+          {{ s.estado }}
+        </span>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="hint" style="margin: 0;">Aún no hay solicitudes de prótesis generadas para este paciente.</p>
+    {% endif %}
+  </div>
+
+  {% endif %}
+</section>
+{% endblock %}
+

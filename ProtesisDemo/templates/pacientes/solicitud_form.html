@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Solicitar prótesis · SPMEP{% endblock %}
+
+{% block content %}
+<div class="crumbs">
+  <a href="{% url 'pacientes:lista' %}">Pacientes</a> /
+  <a href="{% url 'pacientes:detalle' paciente.curp %}">{{ paciente.nombre_completo }}</a> /
+  Solicitar prótesis
+</div>
+
+<h1 style="margin-bottom: 16px;">Solicitar prótesis</h1>
+
+<div class="card soft" style="margin-bottom: 18px;">
+  <p class="hint" style="color: var(--tx);">
+    Paciente: <strong>{{ paciente.nombre_completo }}</strong> ({{ paciente.curp }}).<br>
+    Se vinculará con la <strong>medición vigente del {{ medicion_vigente.fecha_medicion|date:"d/m/Y" }}</strong>
+    (vigente hasta el {{ medicion_vigente.fecha_vencimiento|date:"d/m/Y" }}).
+  </p>
+</div>
+
+<form method="post" novalidate id="form-solicitud">
+  {% csrf_token %}
+
+  {% if form.non_field_errors %}
+  <div class="note bad" style="margin-bottom: 16px;">
+    {{ form.non_field_errors }}
+  </div>
+  {% endif %}
+
+  <div class="card">
+    <div class="band">Datos de la cita de captura</div>
+    <div class="form-grid">
+      <div class="field {% if form.lugar_captura.errors %}inv{% endif %}">
+        <label for="{{ form.lugar_captura.id_for_label }}">
+          {{ form.lugar_captura.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ form.lugar_captura }}
+        {% if form.lugar_captura.errors %}
+        <div class="err">{{ form.lugar_captura.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if form.fecha_hora_cita.errors %}inv{% endif %}">
+        <label for="{{ form.fecha_hora_cita.id_for_label }}">
+          {{ form.fecha_hora_cita.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ form.fecha_hora_cita }}
+        {% if form.fecha_hora_cita.errors %}
+        <div class="err">{{ form.fecha_hora_cita.errors.0 }}</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="acts" style="justify-content: flex-end;">
+    <button type="button" class="btn sec" onclick="confirmarCancelar()">Cancelar</button>
+    <button type="submit" class="btn">Confirmar solicitud</button>
+  </div>
+</form>
+
+<script>
+  function confirmarCancelar() {
+    if (confirm('¿Descartar la solicitud de prótesis y regresar al expediente?')) {
+      window.location.href = "{% url 'pacientes:detalle' paciente.curp %}";
+    }
+  }
+</script>
+{% endblock %}
+

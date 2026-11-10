@@ -8,16 +8,46 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  {% block extra_head %}{% endblock %}
 </head>
 <body class="{% block body_class %}{% endblock %}">
   {% block layout %}
   <header class="top">
-    <p class="logo"><strong>SPMEP</strong></p>
-    {% if request.session.rol %}
-    <p class="header-rol">{{ request.session.rol }}</p>
+    {% if request.session.rol == "Administrador" %}
+    <a href="{% url 'usuarios:administrar_usuarios' %}" class="logo" style="text-decoration:none;">
+    {% elif request.session.rol == "Enfermera" or request.session.rol == "Psicóloga" %}
+    <a href="{% url 'pacientes:lista' %}" class="logo" style="text-decoration:none;">
+    {% else %}
+    <a href="{% url 'usuarios:login' %}" class="logo" style="text-decoration:none;">
     {% endif %}
+      <svg width="28" height="28" viewBox="0 0 64 64" fill="none" stroke="#ec1e79" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M32 36C13 19 21 5 32 5s19 14 0 31Z"/>
+        <path d="M32 36 18 59M32 36l14 23"/>
+      </svg>
+      <strong>SPMEP</strong>
+    </a>
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+      {% if request.session.rol %}
+        <span class="header-rol">{{ request.session.nombre|default:request.session.rol }} ({{ request.session.rol }})</span>
+        {% if request.session.rol == "Administrador" %}
+          <a href="{% url 'usuarios:administrar_usuarios' %}" class="textlink" style="font-size:0.92rem;">Administrar usuarios</a>
+        {% elif request.session.rol == "Enfermera" or request.session.rol == "Psicóloga" %}
+          <a href="{% url 'pacientes:lista' %}" class="textlink" style="font-size:0.92rem;">Pacientes</a>
+        {% endif %}
+        <a href="{% url 'usuarios:logout' %}" class="btn sec" style="padding:6px 12px;font-size:0.85rem;">Cerrar sesión</a>
+      {% endif %}
+    </div>
   </header>
   <main>
+    {% if messages %}
+    <div style="margin-bottom: 18px; display: grid; gap: 8px;">
+      {% for message in messages %}
+      <div class="note {% if message.tags == 'error' %}bad{% elif message.tags == 'success' %}ok{% elif message.tags == 'warning' %}p{% endif %}">
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
     {% block content %}{% endblock %}
   </main>
   {% endblock %}

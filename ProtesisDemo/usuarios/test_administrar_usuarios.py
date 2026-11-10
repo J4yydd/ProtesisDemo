@@ -133,14 +133,13 @@ class AdministrarUsuariosTests(TestCase):
         self.assertContains(respuesta, "Esta solicitud está pendiente de revisión.")
         self.assertNotContains(respuesta, "ya fue procesada")
 
-    def test_panel_administrador_muestra_acceso(self):
+    def test_administrador_tiene_acceso_a_administrar_usuarios(self):
         self._sesion(self.admin)
-        respuesta = self.client.get(reverse("usuarios:panel"))
+        respuesta = self.client.get(reverse("usuarios:administrar_usuarios"))
+        self.assertEqual(respuesta.status_code, 200)
         self.assertContains(respuesta, "Administrar usuarios")
-        self.assertContains(respuesta, reverse("usuarios:administrar_usuarios"))
 
-    def test_panel_otro_rol_no_muestra_acceso(self):
+    def test_otro_rol_no_tiene_acceso_a_administrar_usuarios(self):
         self._sesion(self.enfermera)
-        respuesta = self.client.get(reverse("usuarios:panel"))
-        self.assertNotContains(respuesta, "Administrar usuarios")
-        self.assertNotContains(respuesta, reverse("usuarios:administrar_usuarios"))
+        respuesta = self.client.get(reverse("usuarios:administrar_usuarios"))
+        self.assertEqual(respuesta.status_code, 403)

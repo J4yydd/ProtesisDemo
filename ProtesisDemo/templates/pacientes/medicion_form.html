@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}Registrar medición · SPMEP{% endblock %}
+
+{% block content %}
+<div class="crumbs">
+  <a href="{% url 'pacientes:lista' %}">Pacientes</a> /
+  <a href="{% url 'pacientes:detalle' paciente.curp %}">{{ paciente.nombre_completo }}</a> /
+  Registrar medición antropométrica
+</div>
+
+<h1 style="margin-bottom: 16px;">Registrar medición antropométrica</h1>
+
+<form method="post" novalidate id="form-medicion">
+  {% csrf_token %}
+
+  {% if form.non_field_errors %}
+  <div class="note bad" style="margin-bottom: 16px;">
+    {{ form.non_field_errors }}
+  </div>
+  {% endif %}
+
+  <div class="card soft">
+    <p class="hint" style="color: var(--tx);">
+      Expediente <strong>#{{ expediente.id_expediente }}</strong> · <strong>{{ paciente.nombre_completo }}</strong>.
+      Al guardar, esta medición será la vigente (dura 7 días) y la anterior pasará al historial automáticamente.
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="band">Nueva medición antropométrica <span class="hint" style="font-weight: normal;">(medidas en cm, estatura en m, peso en kg)</span></div>
+    <div class="form-grid">
+      <div class="field {% if form.fecha_medicion.errors %}inv{% endif %}">
+        <label for="{{ form.fecha_medicion.id_for_label }}">
+          {{ form.fecha_medicion.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ form.fecha_medicion }}
+        {% if form.fecha_medicion.errors %}
+        <div class="err">{{ form.fecha_medicion.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if form.lr.errors %}inv{% endif %}">
+        <label for="{{ form.lr.id_for_label }}">
+          {{ form.lr.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ form.lr }}
+        {% if form.lr.errors %}
+        <div class="err">{{ form.lr.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if form.mp.errors %}inv{% endif %}">
+        <label for="{{ form.mp.id_for_label }}">
+          {{ form.mp.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ form.mp }}
+        {% if form.mp.errors %}
+        <div class="err">{{ form.mp.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if form.ir.errors %}inv{% endif %}">
+        <label for="{{ form.ir.id_for_label }}">
+          {{ form.ir.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ form.ir }}
+        {% if form.ir.errors %}
+        <div class="err">{{ form.ir.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if form.mr.errors %}inv{% endif %}">
+        <label for="{{ form.mr.id_for_label }}">
+          {{ form.mr.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ form.mr }}
+        {% if form.mr.errors %}
+        <div class="err">{{ form.mr.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if form.torax.errors %}inv{% endif %}">
+        <label for="{{ form.torax.id_for_label }}">
+          {{ form.torax.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ form.torax }}
+        {% if form.torax.errors %}
+        <div class="err">{{ form.torax.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if form.estatura.errors %}inv{% endif %}">
+        <label for="{{ form.estatura.id_for_label }}">
+          {{ form.estatura.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ form.estatura }}
+        {% if form.estatura.errors %}
+        <div class="err">{{ form.estatura.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if form.peso.errors %}inv{% endif %}">
+        <label for="{{ form.peso.id_for_label }}">
+          {{ form.peso.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ form.peso }}
+        {% if form.peso.errors %}
+        <div class="err">{{ form.peso.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if form.observaciones.errors %}inv{% endif %}" style="grid-column: 1 / -1;">
+        <label for="{{ form.observaciones.id_for_label }}">{{ form.observaciones.label }}</label>
+        {{ form.observaciones }}
+        {% if form.observaciones.errors %}
+        <div class="err">{{ form.observaciones.errors.0 }}</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="acts" style="justify-content: flex-end;">
+    <button type="button" class="btn sec" onclick="confirmarCancelar()">Cancelar</button>
+    <button type="submit" class="btn">Guardar medición</button>
+  </div>
+</form>
+
+<script>
+  function confirmarCancelar() {
+    if (confirm('¿Descartar los datos capturados y regresar al expediente?')) {
+      window.location.href = "{% url 'pacientes:detalle' paciente.curp %}";
+    }
+  }
+</script>
+{% endblock %}
+

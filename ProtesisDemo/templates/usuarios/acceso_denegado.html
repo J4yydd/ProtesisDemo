@@ -6,6 +6,12 @@
 <section class="card">
   <h1>Acceso denegado</h1>
   <p class="lead">No tienes permiso para ver esta sección.</p>
-  <p class="hint"><a class="textlink" href="{% url 'usuarios:panel' %}">Volver al panel</a></p>
+  {% if request.session.rol == "Administrador" %}
+  <p class="hint"><a class="textlink" href="{% url 'usuarios:administrar_usuarios' %}">Ir a Administrar usuarios</a></p>
+  {% elif request.session.rol == "Enfermera" or request.session.rol == "Psicóloga" %}
+  <p class="hint"><a class="textlink" href="{% url 'pacientes:lista' %}">Ir a Lista de pacientes</a></p>
+  {% else %}
+  <p class="hint"><a class="textlink" href="{% url 'usuarios:logout' %}">Cerrar sesión</a></p>
+  {% endif %}
 </section>
 {% endblock %}

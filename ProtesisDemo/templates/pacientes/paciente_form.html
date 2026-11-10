@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Registrar paciente · SPMEP{% endblock %}
+
+{% block content %}
+<div class="crumbs">
+  <a href="{% url 'pacientes:lista' %}">Pacientes</a> / Registrar paciente
+</div>
+
+<h1 style="margin-bottom: 16px;">Registrar paciente</h1>
+
+<form method="post" novalidate id="form-paciente">
+  {% csrf_token %}
+
+  {% if form.non_field_errors %}
+  <div class="note bad" style="margin-bottom: 16px;">
+    {{ form.non_field_errors }}
+  </div>
+  {% endif %}
+
+  <!-- Datos obligatorios -->
+  <div class="card">
+    <div class="band">Datos obligatorios</div>
+    <div class="form-grid">
+      <div class="field {% if form.nombre_completo.errors %}inv{% endif %}">
+        <label for="{{ form.nombre_completo.id_for_label }}">
+          {{ form.nombre_completo.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ form.nombre_completo }}
+        {% if form.nombre_completo.errors %}
+        <div class="err">{{ form.nombre_completo.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if form.fecha_nacimiento.errors %}inv{% endif %}">
+        <label for="{{ form.fecha_nacimiento.id_for_label }}">
+          {{ form.fecha_nacimiento.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ form.fecha_nacimiento }}
+        {% if form.fecha_nacimiento.errors %}
+        <div class="err">{{ form.fecha_nacimiento.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if form.telefono.errors %}inv{% endif %}">
+        <label for="{{ form.telefono.id_for_label }}">
+          {{ form.telefono.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ form.telefono }}
+        {% if form.telefono.errors %}
+        <div class="err">{{ form.telefono.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if form.curp.errors %}inv{% endif %}">
+        <label for="{{ form.curp.id_for_label }}">
+          {{ form.curp.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ form.curp }}
+        {% if form.curp.errors %}
+        <div class="err">{{ form.curp.errors.0 }}</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Datos opcionales -->
+  <div class="card">
+    <div class="band">Datos opcionales</div>
+    <div class="form-grid">
+      <div class="field {% if form.correo.errors %}inv{% endif %}">
+        <label for="{{ form.correo.id_for_label }}">{{ form.correo.label }}</label>
+        {{ form.correo }}
+        {% if form.correo.errors %}
+        <div class="err">{{ form.correo.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if form.nivel_estudios.errors %}inv{% endif %}">
+        <label for="{{ form.nivel_estudios.id_for_label }}">{{ form.nivel_estudios.label }}</label>
+        {{ form.nivel_estudios }}
+        {% if form.nivel_estudios.errors %}
+        <div class="err">{{ form.nivel_estudios.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if form.ingresos_mensuales.errors %}inv{% endif %}">
+        <label for="{{ form.ingresos_mensuales.id_for_label }}">{{ form.ingresos_mensuales.label }}</label>
+        {{ form.ingresos_mensuales }}
+        {% if form.ingresos_mensuales.errors %}
+        <div class="err">{{ form.ingresos_mensuales.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if form.estado_civil.errors %}inv{% endif %}">
+        <label for="{{ form.estado_civil.id_for_label }}">{{ form.estado_civil.label }}</label>
+        {{ form.estado_civil }}
+        {% if form.estado_civil.errors %}
+        <div class="err">{{ form.estado_civil.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if form.tiene_hijos.errors %}inv{% endif %}">
+        <label for="{{ form.tiene_hijos.id_for_label }}">{{ form.tiene_hijos.label }}</label>
+        {{ form.tiene_hijos }}
+        {% if form.tiene_hijos.errors %}
+        <div class="err">{{ form.tiene_hijos.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if form.trabaja_fuera_casa.errors %}inv{% endif %}">
+        <label for="{{ form.trabaja_fuera_casa.id_for_label }}">{{ form.trabaja_fuera_casa.label }}</label>
+        {{ form.trabaja_fuera_casa }}
+        {% if form.trabaja_fuera_casa.errors %}
+        <div class="err">{{ form.trabaja_fuera_casa.errors.0 }}</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="acts" style="justify-content: flex-end;">
+    <button type="button" class="btn sec" onclick="confirmarCancelar()">Cancelar</button>
+    <button type="submit" class="btn">Guardar registro</button>
+  </div>
+</form>
+
+<script>
+  function confirmarCancelar() {
+    if (confirm('¿Descartar los datos capturados y regresar a la lista de pacientes?')) {
+      window.location.href = "{% url 'pacientes:lista' %}";
+    }
+  }
+</script>
+{% endblock %}
+

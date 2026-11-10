@@ -10,7 +10,6 @@ urlpatterns = [
     path("solicitar-acceso/enviada/", views.solicitud_enviada, name="solicitud_enviada"),
     path("auth/google/", views.google_login, name="google_login"),
     path("auth/google/callback/", views.google_callback, name="google_callback"),
-    path("panel/", views.panel, name="panel"),
     path("logout/", views.logout, name="logout"),
     path("administrar-usuarios/", views.administrar_usuarios, name="administrar_usuarios"),
     path(

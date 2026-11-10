@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+
+{% block title %}Registrar expediente · SPMEP{% endblock %}
+
+{% block content %}
+<div class="crumbs">
+  <a href="{% url 'pacientes:lista' %}">Pacientes</a> /
+  <a href="{% url 'pacientes:detalle' paciente.curp %}">{{ paciente.nombre_completo }}</a> /
+  Registrar expediente
+</div>
+
+<h1 style="margin-bottom: 16px;">Registrar expediente</h1>
+
+<form method="post" novalidate id="form-expediente">
+  {% csrf_token %}
+
+  {% if exp_form.non_field_errors or med_form.non_field_errors %}
+  <div class="note bad" style="margin-bottom: 16px;">
+    {{ exp_form.non_field_errors }}
+    {{ med_form.non_field_errors }}
+  </div>
+  {% endif %}
+
+  <!-- Tarjeta informativa del paciente -->
+  <div class="card soft">
+    <div class="form-grid">
+      <div class="field">
+        <label>CURP del paciente</label>
+        <input type="text" value="{{ paciente.curp }}" disabled>
+      </div>
+      <div class="field">
+        <label>Paciente</label>
+        <div style="padding: 10px 0; font-weight: 700; color: var(--bh);">{{ paciente.nombre_completo }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Antecedentes oncológicos -->
+  <div class="card">
+    <div class="band">Antecedentes oncológicos</div>
+    <div class="form-grid">
+      <div class="field {% if exp_form.fecha_diagnostico.errors %}inv{% endif %}">
+        <label for="{{ exp_form.fecha_diagnostico.id_for_label }}">
+          {{ exp_form.fecha_diagnostico.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ exp_form.fecha_diagnostico }}
+        {% if exp_form.fecha_diagnostico.errors %}
+        <div class="err">{{ exp_form.fecha_diagnostico.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if exp_form.tipo_cancer.errors %}inv{% endif %}">
+        <label for="{{ exp_form.tipo_cancer.id_for_label }}">
+          {{ exp_form.tipo_cancer.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ exp_form.tipo_cancer }}
+        {% if exp_form.tipo_cancer.errors %}
+        <div class="err">{{ exp_form.tipo_cancer.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if exp_form.tratamiento.errors %}inv{% endif %}">
+        <label for="{{ exp_form.tratamiento.id_for_label }}">
+          {{ exp_form.tratamiento.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ exp_form.tratamiento }}
+        {% if exp_form.tratamiento.errors %}
+        <div class="err">{{ exp_form.tratamiento.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if exp_form.fecha_mastectomia.errors %}inv{% endif %}">
+        <label for="{{ exp_form.fecha_mastectomia.id_for_label }}">
+          {{ exp_form.fecha_mastectomia.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ exp_form.fecha_mastectomia }}
+        {% if exp_form.fecha_mastectomia.errors %}
+        <div class="err">{{ exp_form.fecha_mastectomia.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if exp_form.lateralidad.errors %}inv{% endif %}">
+        <label for="{{ exp_form.lateralidad.id_for_label }}">
+          {{ exp_form.lateralidad.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ exp_form.lateralidad }}
+        {% if exp_form.lateralidad.errors %}
+        <div class="err">{{ exp_form.lateralidad.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if exp_form.servicio_medico.errors %}inv{% endif %}">
+        <label for="{{ exp_form.servicio_medico.id_for_label }}">
+          {{ exp_form.servicio_medico.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ exp_form.servicio_medico }}
+        {% if exp_form.servicio_medico.errors %}
+        <div class="err">{{ exp_form.servicio_medico.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if exp_form.cuenta_con_protesis.errors %}inv{% endif %}">
+        <label for="{{ exp_form.cuenta_con_protesis.id_for_label }}">
+          {{ exp_form.cuenta_con_protesis.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ exp_form.cuenta_con_protesis }}
+        {% if exp_form.cuenta_con_protesis.errors %}
+        <div class="err">{{ exp_form.cuenta_con_protesis.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if exp_form.mano_dominante.errors %}inv{% endif %}">
+        <label for="{{ exp_form.mano_dominante.id_for_label }}">
+          {{ exp_form.mano_dominante.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ exp_form.mano_dominante }}
+        {% if exp_form.mano_dominante.errors %}
+        <div class="err">{{ exp_form.mano_dominante.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if exp_form.observaciones.errors %}inv{% endif %}" style="grid-column: 1 / -1;">
+        <label for="{{ exp_form.observaciones.id_for_label }}">{{ exp_form.observaciones.label }}</label>
+        {{ exp_form.observaciones }}
+        {% if exp_form.observaciones.errors %}
+        <div class="err">{{ exp_form.observaciones.errors.0 }}</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Primera medición antropométrica -->
+  <div class="card">
+    <div class="band">Primera medición antropométrica <span class="hint" style="font-weight: normal;">(medidas en cm, estatura en m, peso en kg)</span></div>
+    <div class="form-grid">
+      <div class="field {% if med_form.fecha_medicion.errors %}inv{% endif %}">
+        <label for="{{ med_form.fecha_medicion.id_for_label }}">
+          {{ med_form.fecha_medicion.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ med_form.fecha_medicion }}
+        {% if med_form.fecha_medicion.errors %}
+        <div class="err">{{ med_form.fecha_medicion.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if med_form.lr.errors %}inv{% endif %}">
+        <label for="{{ med_form.lr.id_for_label }}">
+          {{ med_form.lr.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ med_form.lr }}
+        {% if med_form.lr.errors %}
+        <div class="err">{{ med_form.lr.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if med_form.mp.errors %}inv{% endif %}">
+        <label for="{{ med_form.mp.id_for_label }}">
+          {{ med_form.mp.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ med_form.mp }}
+        {% if med_form.mp.errors %}
+        <div class="err">{{ med_form.mp.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if med_form.ir.errors %}inv{% endif %}">
+        <label for="{{ med_form.ir.id_for_label }}">
+          {{ med_form.ir.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ med_form.ir }}
+        {% if med_form.ir.errors %}
+        <div class="err">{{ med_form.ir.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if med_form.mr.errors %}inv{% endif %}">
+        <label for="{{ med_form.mr.id_for_label }}">
+          {{ med_form.mr.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ med_form.mr }}
+        {% if med_form.mr.errors %}
+        <div class="err">{{ med_form.mr.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if med_form.torax.errors %}inv{% endif %}">
+        <label for="{{ med_form.torax.id_for_label }}">
+          {{ med_form.torax.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ med_form.torax }}
+        {% if med_form.torax.errors %}
+        <div class="err">{{ med_form.torax.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if med_form.estatura.errors %}inv{% endif %}">
+        <label for="{{ med_form.estatura.id_for_label }}">
+          {{ med_form.estatura.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ med_form.estatura }}
+        {% if med_form.estatura.errors %}
+        <div class="err">{{ med_form.estatura.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if med_form.peso.errors %}inv{% endif %}">
+        <label for="{{ med_form.peso.id_for_label }}">
+          {{ med_form.peso.label }} <span class="hint" style="color:var(--err); font-weight:normal;">(obligatorio)</span>
+        </label>
+        {{ med_form.peso }}
+        {% if med_form.peso.errors %}
+        <div class="err">{{ med_form.peso.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field {% if med_form.observaciones.errors %}inv{% endif %}" style="grid-column: 1 / -1;">
+        <label for="{{ med_form.observaciones.id_for_label }}">{{ med_form.observaciones.label }}</label>
+        {{ med_form.observaciones }}
+        {% if med_form.observaciones.errors %}
+        <div class="err">{{ med_form.observaciones.errors.0 }}</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Consentimientos -->
+  <div class="card">
+    <div class="band">Consentimientos</div>
+
+    <label class="chk">
+      {{ exp_form.consentimiento_seguimiento }}
+      <span>
+        <strong>El paciente consiente el seguimiento y uso de sus datos</strong>
+        <span class="hint" style="color:var(--err);">(obligatorio para crear el expediente)</span>
+        {% if exp_form.consentimiento_seguimiento.errors %}
+        <span class="err" style="display:block;">{{ exp_form.consentimiento_seguimiento.errors.0 }}</span>
+        {% endif %}
+      </span>
+    </label>
+
+    <label class="chk">
+      {{ exp_form.consentimiento_captura }}
+      <span>
+        <strong>El paciente consiente la captura para la prótesis</strong>
+        <span class="hint">(si aplica; indispensable para poder solicitar la prótesis posteriormente)</span>
+        {% if exp_form.consentimiento_captura.errors %}
+        <span class="err" style="display:block;">{{ exp_form.consentimiento_captura.errors.0 }}</span>
+        {% endif %}
+      </span>
+    </label>
+  </div>
+
+  <div class="acts" style="justify-content: flex-end;">
+    <button type="button" class="btn sec" onclick="confirmarCancelar()">Cancelar</button>
+    <button type="submit" class="btn">Guardar expediente</button>
+  </div>
+</form>
+
+<script>
+  function confirmarCancelar() {
+    if (confirm('¿Descartar los datos capturados y regresar al paciente?')) {
+      window.location.href = "{% url 'pacientes:detalle' paciente.curp %}";
+    }
+  }
+</script>
+{% endblock %}
+

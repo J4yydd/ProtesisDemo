@@ -88,14 +88,12 @@ class AutorizacionInternaTests(TestCase):
             usuario.correo_electronico,
         )
 
-    def test_usuario_activo_redirige_al_panel(self):
+    def test_usuario_activo_redirige_a_su_espacio(self):
         self._crear_usuario()
         respuesta = self._callback_google("ana@example.com")
         self.assertEqual(respuesta.status_code, 200)
-        self.assertEqual(respuesta.resolver_match.url_name, "panel")
-        self.assertContains(respuesta, "Ana Pérez")
-        self.assertContains(respuesta, "ana@example.com")
-        self.assertContains(respuesta, "Enfermera")
+        self.assertEqual(respuesta.resolver_match.url_name, "lista")
+        self.assertContains(respuesta, "Pacientes")
 
     def test_usuario_inactivo_no_entra(self):
         self._crear_usuario(activo=False)
@@ -153,20 +151,6 @@ class AutorizacionInternaTests(TestCase):
         )
         self.assertNotIn(SESION_ID_USUARIO, self.client.session)
 
-    def test_panel_sin_sesion_redirige_a_login(self):
-        respuesta = self.client.get(reverse("usuarios:panel"))
-        self.assertEqual(respuesta.status_code, 302)
-        self.assertEqual(respuesta.url, reverse("usuarios:login"))
-
-    def test_panel_con_sesion_valida_responde(self):
-        usuario = self._crear_usuario()
-        self._guardar_sesion_interna(usuario)
-        respuesta = self.client.get(reverse("usuarios:panel"))
-        self.assertEqual(respuesta.status_code, 200)
-        self.assertContains(respuesta, usuario.nombre)
-        self.assertContains(respuesta, usuario.correo_electronico)
-        self.assertContains(respuesta, usuario.rol.nombre)
-
     def test_logout_limpia_la_sesion(self):
         usuario = self._crear_usuario()
         self._guardar_sesion_interna(usuario)
@@ -178,9 +162,9 @@ class AutorizacionInternaTests(TestCase):
         self.assertNotIn(SESION_ROL, self.client.session)
         self.assertNotIn(SESION_CORREO, self.client.session)
 
-    def test_login_con_sesion_interna_redirige_al_panel(self):
+    def test_login_con_sesion_interna_redirige_a_su_espacio(self):
         usuario = self._crear_usuario()
         self._guardar_sesion_interna(usuario)
         respuesta = self.client.get(reverse("usuarios:login"))
         self.assertEqual(respuesta.status_code, 302)
-        self.assertEqual(respuesta.url, reverse("usuarios:panel"))
+        self.assertEqual(respuesta.url, reverse("pacientes:lista"))
